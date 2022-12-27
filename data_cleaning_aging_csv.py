@@ -51,7 +51,7 @@ df_comapnies = pd.read_csv('aging_companies/Aging Companies - Companies.csv')
 
 #get only running companies, rename columns
 
-# clean the diseases column
+# clean the diseases column and then add the data to S3
 
 df_comapnies_running = (df_comapnies[df_comapnies['operating status'] =='operating']).reset_index(drop=True)
 df_comapnies_running['company_name'] = df_comapnies_running['[HOW TO USE THIS TABLE]\ncompany']
