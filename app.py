@@ -7,19 +7,19 @@ import vector_search
 
 
 @st.cache
-def read_data(s3_data="s3://vector-search-blog/misinformation_papers.csv"):
-    """Read the data from S3."""
-    return pd.read_csv(s3_data)
+def read_data(data="data/publications/post2018_agingcomapnies_papers.csv"):
+    """Read the data from local."""
+    return pd.read_csv(data)
 
 
 @st.cache(allow_output_mutation=True)
-def load_bert_model(name="distilbert-base-nli-stsb-mean-tokens"):
+def load_bert_model():
     """Instantiate a sentence-level DistilBERT model."""
-    return SentenceTransformer(name)
+    return model = SentenceTransformer('sentence-transformers/allenai-specter')
 
 
 @st.cache(allow_output_mutation=True)
-def load_faiss_index(path_to_faiss="models/faiss_index.pickle"):
+def load_faiss_index(path_to_faiss="data/models/faiss_index_1000abstracts.pickle"):
     """Load and deserialize the Faiss index."""
     with open(path_to_faiss, "rb") as h:
         data = pickle.load(h)
