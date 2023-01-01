@@ -6,4 +6,3 @@ faiss-cpu==1.7.3
 numpy==1.23.5
 folium==0.14.0
 streamlit==1.16.0
--e .

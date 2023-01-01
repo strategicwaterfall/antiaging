@@ -3,7 +3,6 @@ import pickle
 import pandas as pd
 import streamlit as st
 from sentence_transformers import SentenceTransformer
-import vector_search
 import numpy as np
 
 
@@ -34,6 +33,32 @@ def load_faiss_index(path_to_faiss="data/models/faiss_index_allabstracts.pickle"
     with open(path_to_faiss, "rb") as h:
         data = pickle.load(h)
     return faiss.deserialize_index(data)
+
+@st.chahe(allow_output_mutation=True)
+def vector_search(query, model, index, num_results=10):
+    """Tranforms query to vector using #https://huggingface.co/sentence-transformers/allenai-specter
+model = SentenceTransformer('sentence-transformers/allenai-specter')
+and finds similar vectors using FAISS.
+    
+    Args:
+        query (str): User query that should be more than a sentence long.
+        model (sentence_transformers.SentenceTransformer.SentenceTransformer)
+        index (`numpy.ndarray`): FAISS index that needs to be deserialized.
+        num_results (int): Number of results to return.
+    
+    Returns:
+        D (:obj:`numpy.array` of `float`): Distance between results and query.
+        I (:obj:`numpy.array` of `int`): Paper ID of the results.
+    
+    """
+    vector = model.encode(list(query))
+    D, I = index.search(np.array(vector).astype("float32"), k=num_results)
+    return D, I
+
+@st.chahe(allow_output_mutation=True)
+def id2details(df, I, column):
+    """Returns the paper titles based on the paper index."""
+    return [list(df[df.id == idx][column]) for idx in I[0]]
 
 #convert publication date column to date time DONE
 #give option to search from 100 companies listed in thedatabase DONe
