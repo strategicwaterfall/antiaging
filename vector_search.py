@@ -27,3 +27,4 @@ def id2details(df, I, column):
 
 # Querying the index
 #D, I = vector_search([user_query], model, index, num_results=10
+

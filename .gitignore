@@ -18,7 +18,7 @@
 *.zip
 *.tar.gz
 *.rar
-
+*.pyc
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 .DS_Store
@@ -26,3 +26,4 @@ config.py
 s3connect.py
 .vscode/
 *.code-workspace
+__pycache__/vector_search.cpython-310.pyc

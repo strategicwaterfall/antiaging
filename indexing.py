@@ -16,11 +16,11 @@ import pickle
 from vector_engine.utils import vector_search, id2details
 
 # Use pandas to read files from S3 buckets!
-df = pd.read_csv('post2018_agingcomapnies_papers.csv', index_col=0)
+df = pd.read_csv('data/publications/post2018_agingcomapnies_papers.csv', index_col=0)
 df = df.fillna('') # remove NaNs
 #https://huggingface.co/sentence-transformers/allenai-specter
 model = SentenceTransformer('sentence-transformers/allenai-specter')
-
+#for the trial app we will display only 1000 abstracts
 abstracts = df.abstract[0:1000].to_list()
 
 # Convert abstracts to vectors
