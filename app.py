@@ -73,51 +73,54 @@ def id2details(df, I, column):
 #authors are stored in CSV and you need ID as key of the paper to get the authors
 
 def main():
+    try:
     
-    # Load data and models
-    data = read_data()
-    model = load_bert_model()
-    faiss_index = load_faiss_index()
-    embeddings = load_embeddings()
-    # important columns - company_name, article_id, title, keywords, publication_date, abstract, journal, doi, authors
-    # variables - user_input, filter_company, num_results
-    comapny_list = list(set(data['company_name'].tolist()))
+        # Load data and models
+        data = read_data()
+        model = load_bert_model()
+        faiss_index = load_faiss_index()
+        embeddings = load_embeddings()
+        # important columns - company_name, article_id, title, keywords, publication_date, abstract, journal, doi, authors
+        # variables - user_input, filter_company, num_results
+        comapny_list = list(set(data['company_name'].tolist()))
 
-    st.title("AI Search for scientific database curated within anti-aging space")
+        st.title("AI Search for scientific database curated within anti-aging space")
 
-    # User search
-    user_input = st.text_area("Search box", "stem cell research")
+        # User search
+        user_input = st.text_area("Search box", "stem cell research")
 
-    # Filters
-    st.sidebar.markdown("**Filters**")
-    #filter by keywords, company and seed terms (stem cell, aging, etc) within th abstract and title
-    #display the number of results, authors, companies, journals, keywords
-    filter_company = st.sidebar.multiselect('Select Company or Companies (optional)',comapny_list) #get dropdown of companies
-    num_results = st.sidebar.slider("Number of search results", 10, 50, 10)
+        # Filters
+        st.sidebar.markdown("**Filters**")
+        #filter by keywords, company and seed terms (stem cell, aging, etc) within th abstract and title
+        #display the number of results, authors, companies, journals, keywords
+        filter_company = st.sidebar.multiselect('Select Company or Companies (optional)',comapny_list) #get dropdown of companies
+        num_results = st.sidebar.slider("Number of search results", 10, 50, 10)
 
-    # Fetch results
-    if user_input:
-        # Get paper IDs
-        D, I = vector_search([user_input], model, faiss_index, num_results)
-        # Slice data on comapny name
-        frame = data[
-          (data.company_names == filter_company) #see if this works if you have multiple companies
-        ]
-        # Get individual results
-        for id_ in I.flatten().tolist():
-            if id_ in set(frame.article_id):
-                f = frame[(frame.article_id == id_)]
-            else:
-                continue
+        # Fetch results
+        if user_input:
+            # Get paper IDs
+            D, I = vector_search([user_input], model, faiss_index, num_results)
+            # Slice data on comapny name
+            frame = data[
+            (data.company_names == filter_company) #see if this works if you have multiple companies
+            ]
+            # Get individual results
+            for id_ in I.flatten().tolist():
+                if id_ in set(frame.article_id):
+                    f = frame[(frame.article_id == id_)]
+                else:
+                    continue
 
-            st.write(
-                f"""**{f.iloc[0].title}**  
-            **Journal**: {f.iloc[0].journal}  
-            **Publication Date**: {f.iloc[0].publication_date}  
-            **Abstract**
-            {f.iloc[0].abstract}
-            """
-            )
+                st.write(
+                    f"""**{f.iloc[0].title}**  
+                **Journal**: {f.iloc[0].journal}  
+                **Publication Date**: {f.iloc[0].publication_date}  
+                **Abstract**
+                {f.iloc[0].abstract}
+                """
+                )
+    except Exception as e:
+        st.write(e)
 
 
 if __name__ == "__main__":
