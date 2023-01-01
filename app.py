@@ -121,6 +121,8 @@ def main():
                 **Publication Date**: {f.iloc[0].publication_date}  
                 **Abstract**
                 {f.iloc[0].abstract}
+                **Affiliate Anti-Aging focused Company Name**
+                {f.iloc[0].company_name}
                 """
                 )
     except Exception as e:
