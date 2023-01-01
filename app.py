@@ -34,7 +34,7 @@ def load_faiss_index(path_to_faiss="data/models/faiss_index_allabstracts.pickle"
         data = pickle.load(h)
     return faiss.deserialize_index(data)
 
-@st.chahe(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def vector_search(query, model, index, num_results=10):
     """Tranforms query to vector using #https://huggingface.co/sentence-transformers/allenai-specter
 model = SentenceTransformer('sentence-transformers/allenai-specter')
@@ -55,7 +55,7 @@ and finds similar vectors using FAISS.
     D, I = index.search(np.array(vector).astype("float32"), k=num_results)
     return D, I
 
-@st.chahe(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def id2details(df, I, column):
     """Returns the paper titles based on the paper index."""
     return [list(df[df.id == idx][column]) for idx in I[0]]
@@ -101,9 +101,13 @@ def main():
             # Get paper IDs
             D, I = vector_search([user_input], model, faiss_index, num_results)
             # Slice data on comapny name
-            frame = data[
-            (data.company_names == filter_company) #see if this works if you have multiple companies
-            ]
+            try:
+                if filter_company:
+                    frame = data[data['company_name'].isin(filter_company)]
+                else:
+                    frame = data
+            except:
+                pass #see if this works if you have multiple companies
             # Get individual results
             for id_ in I.flatten().tolist():
                 if id_ in set(frame.article_id):
