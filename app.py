@@ -11,6 +11,7 @@ def read_data(data="data/publications/post2018_agingcomapnies_papers.csv"):
     """Read the data from local."""
     data = pd.read_csv(data)
     data['publication_date'] = pd.to_datetime(data['publication_date'])
+    data['publication_date'] = data['publication_date'].dt.date
     return data
 
 
@@ -85,15 +86,16 @@ def main():
         comapny_list = list(set(data['company_name'].tolist()))
 
         st.title("AI Search for scientific database curated within anti-aging space")
+        st.write("Search results may not reflect all information available in the PubMed database, please search the title or DOI to get more information.")
 
         # User search
-        user_input = st.text_area("Search box", "stem cell research")
+        user_input = st.text_area("Search box-Optional", "stem cell research")
 
         # Filters
         st.sidebar.markdown("**Filters**")
         #filter by keywords, company and seed terms (stem cell, aging, etc) within th abstract and title
         #display the number of results, authors, companies, journals, keywords
-        filter_company = st.sidebar.multiselect('Select Company or Companies (optional)',comapny_list) #get dropdown of companies
+        filter_company = st.sidebar.multiselect('Select Company or Companies (optional)',comapny_list, 'altos labs') #get dropdown of companies
         num_results = st.sidebar.slider("Number of search results", 10, 50, 10)
 
         # Fetch results
@@ -114,17 +116,40 @@ def main():
                     f = frame[(frame.article_id == id_)]
                 else:
                     continue
+                newline= '\n'
 
                 st.write(
                     f"""**{f.iloc[0].title}**  
                 **Journal**: {f.iloc[0].journal}  
                 **Publication Date**: {f.iloc[0].publication_date}  
-                **Abstract**
-                {f.iloc[0].abstract}
-                **Affiliate Anti-Aging focused Company Name**
-                {f.iloc[0].company_name}
+                **Affiliate Anti-Aging Company Name**: {f.iloc[0].company_name.capitalize()}
+                {newline}**DOI**: *{f.iloc[0].doi.split(newline)[0]}*
+                {newline}**Abstract**: {f.iloc[0].abstract}
                 """
                 )
+        else:
+            try:
+                if filter_company:
+                    frame = data[data['company_name'].isin(filter_company)]
+                else:
+                    frame = data
+            
+                for id_ in set(frame.article_id):
+                    f = frame[(frame.article_id == id_)]
+
+                    newline= '\n'
+
+                    st.write(
+                        f"""**{f.iloc[0].title}**  
+                    **Journal**: {f.iloc[0].journal}  
+                    **Publication Date**: {f.iloc[0].publication_date}  
+                    **Affiliate Anti-Aging Company Name**: {f.iloc[0].company_name.capitalize()}
+                    {newline}**DOI**: *{f.iloc[0].doi.split(newline)[0]}*
+                    {newline}**Abstract**: {f.iloc[0].abstract}
+                    """
+                    )
+            except:
+                pass #see if this works if you have multiple companies
     except Exception as e:
         st.write(e)
 
