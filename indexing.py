@@ -12,8 +12,6 @@ import faiss
 import numpy as np
 import pickle
 
-# Used to do vector searches and display the results.
-from vector_engine.utils import vector_search, id2details
 
 #df = df.fillna('') # remove NaNs
 # Use pandas to read files from S3 buckets!
@@ -73,7 +71,8 @@ with open("/Users/paritoshmacmini/Documents/Waveflow/pdf_scanner/models_final/em
     
 #test pickle objects \\
 data = pd.read_csv('data/publications/post2018_agingcomapnies_papers.csv', index_col=0)   
-filter_company= ['brainstorm cell therapeutics','fauna bio']
+filter_company= ['brainstorm cell therapeutics','altos labs']
 frame = data[data['company_name'].isin(filter_company)]
-frame.columns
 frame
+frame.columns
+frame.doi[0]
