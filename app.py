@@ -10,8 +10,11 @@ import numpy as np
 def read_data(data="data/publications/post2018_agingcomapnies_papers.csv"):
     """Read the data from local."""
     data = pd.read_csv(data)
+    # datetime conversation for display
     data['publication_date'] = pd.to_datetime(data['publication_date'])
     data['publication_date'] = data['publication_date'].dt.date
+    # to capitalize each row in the company_name column.
+    data['company_name'] = data['company_name'].str.capitalize()
     return data
 
 
@@ -61,17 +64,8 @@ def id2details(df, I, column):
     """Returns the paper titles based on the paper index."""
     return [list(df[df.id == idx][column]) for idx in I[0]]
 
-#convert publication date column to date time DONE
-#give option to search from 100 companies listed in thedatabase DONe
-#combine authors DONE
 
 
-
-#display the analysis as per the notebook for top authors, top comapnies within the search 
-#clean keywords and display top keywords
-#limit search, limit abstracts, info about authors to subscriber or member area
-#give ability to search by keywords by direct regex match - or elastic match 
-#authors are stored in CSV and you need ID as key of the paper to get the authors
 
 def main():
     try:
@@ -85,17 +79,19 @@ def main():
         # variables - user_input, filter_company, num_results
         comapny_list = list(set(data['company_name'].tolist()))
 
-        st.title("AI Search for scientific database curated within anti-aging space")
-        st.write("Search results may not reflect all information available in the PubMed database, please search the title or DOI to get more information.")
+        st.title("Vectorized Search over 🧬 PubMed abstracts database curated within :blue[anti-aging] industry and research👨‍🔬⚗️🧪💊*")
+        st.caption("""There are over _3000_ abstracts in the database taken from PubMed. All publications are from _2018_ onwards.
+                   These are compiled from 100 operating companies in the :blue[anti-aging] space, inlcuding Altos Labs, Unity Biotechnology, Insilico Medicine, and many more.""")
+        st.caption("""The data about the companies is taken from [this](https://agingbiotech.info/companies) maintained by investor and creator Karl Pfleger.""")
 
         # User search
-        user_input = st.text_area("Search box-Optional", "stem cell research")
+        user_input = st.text_area("Search box-Experimental", "stem cell research")
 
         # Filters
         st.sidebar.markdown("**Filters**")
         #filter by keywords, company and seed terms (stem cell, aging, etc) within th abstract and title
         #display the number of results, authors, companies, journals, keywords
-        filter_company = st.sidebar.multiselect('Select Company or Companies (optional)',comapny_list, 'altos labs') #get dropdown of companies
+        filter_company = st.sidebar.multiselect('Select Company or Companies (optional)',comapny_list, 'Altos labs') #get dropdown of companies
         num_results = st.sidebar.slider("Number of search results", 10, 50, 10)
 
         # Fetch results
@@ -117,16 +113,16 @@ def main():
                 else:
                     continue
                 newline= '\n'
-
                 st.write(
-                    f"""**{f.iloc[0].title}**  
-                **Journal**: {f.iloc[0].journal}  
-                **Publication Date**: {f.iloc[0].publication_date}  
-                **Affiliate Anti-Aging Company Name**: {f.iloc[0].company_name.capitalize()}
-                {newline}**DOI**: *{f.iloc[0].doi.split(newline)[0]}*
-                {newline}**Abstract**: {f.iloc[0].abstract}
-                """
-                )
+                        f"""**{f.iloc[0].title}**  
+                    **Affiliate Anti-Aging Company Name**: {f.iloc[0].company_name.capitalize()}
+                    **Journal**: {f.iloc[0].journal}  
+                    **Publication Date**: {f.iloc[0].publication_date}  
+                    {newline}**Keywords**: *{f.iloc[0].keywords}*
+                    {newline}**DOI**: *{f.iloc[0].doi.split(newline)[0]}*
+                    {newline}**Abstract**: {f.iloc[0].abstract}
+                    """
+                    )
         else:
             try:
                 if filter_company:
@@ -141,15 +137,17 @@ def main():
 
                     st.write(
                         f"""**{f.iloc[0].title}**  
+                    **Affiliate Anti-Aging Company Name**: {f.iloc[0].company_name.capitalize()}
                     **Journal**: {f.iloc[0].journal}  
                     **Publication Date**: {f.iloc[0].publication_date}  
-                    **Affiliate Anti-Aging Company Name**: {f.iloc[0].company_name.capitalize()}
+                    {newline}**Keywords**: *{f.iloc[0].keywords}*
                     {newline}**DOI**: *{f.iloc[0].doi.split(newline)[0]}*
                     {newline}**Abstract**: {f.iloc[0].abstract}
                     """
                     )
             except:
                 pass #see if this works if you have multiple companies
+        st.text("*Search results may not reflect all information available in the PubMed database, please search the title or DOI to get more information.")
     except Exception as e:
         st.write(e)
 
