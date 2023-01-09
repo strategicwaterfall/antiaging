@@ -1,12 +1,10 @@
 # Used to import data from S3.
 import pandas as pd
-import s3fs
-import boto3
 
 # Used to create the dense document vectors.
-import torch
 from sentence_transformers import SentenceTransformer
 
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 # Used to create and store the Faiss index.
 import faiss
 import numpy as np
@@ -15,7 +13,7 @@ import pickle
 
 #df = df.fillna('') # remove NaNs
 # Use pandas to read files from S3 buckets!
-df = pd.read_csv('post2018_agingcomapnies_papers.csv', index_col=0)
+df = pd.read_csv('data/publications/post2018_agingcomapnies_papers.csv', index_col=0)
 """" function that sepearates empty rows in a specific column in a dataframe and returns two dataframes one wiht non-empty rows and other with empty rows
 input is a column and a dataframe
 outputs are two dataframes"""
@@ -28,7 +26,7 @@ def remove_empty_rows(df, column):
 df_noindex, df_report_nonempty_abs = remove_empty_rows(df, 'abstract')
 
 #https://huggingface.co/sentence-transformers/allenai-specter
-model = SentenceTransformer('sentence-transformers/allenai-specter')
+#model = SentenceTransformer('sentence-transformers/allenai-specter')
 
 # to get the embeddings for the first 1000 abstracts - given the load on the machine 
 df_report_nonempty_abs = df_report_nonempty_abs.reset_index(drop=True)
@@ -69,6 +67,19 @@ with open("/Users/paritoshmacmini/Documents/Waveflow/pdf_scanner/models_final/em
     pickle.dump(embeddings, h)
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+    
 #test pickle objects \\
 data = pd.read_csv('data/publications/post2018_agingcomapnies_papers.csv', index_col=0)   
 filter_company= ['brainstorm cell therapeutics','altos labs']
@@ -76,3 +87,15 @@ frame = data[data['company_name'].isin(filter_company)]
 frame
 frame.columns
 frame.doi[0]
+
+
+
+
+
+
+
+# from transformers import AutoTokenizer, RoBERTaMultiNER2
+
+#tokenizer = AutoTokenizer.from_pretrained("dmis-lab/bern2-ner")
+
+#model = RoBERTaMultiNER2.from_pretrained("dmis-lab/bern2-ner")
