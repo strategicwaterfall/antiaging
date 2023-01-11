@@ -11,7 +11,7 @@ import nltk
 ## for bag-of-words
 from sklearn import feature_extraction, model_selection, naive_bayes, pipeline, manifold, preprocessing
 ## for explainer
-!pip install lime -q
+#!pip install lime -q
 from lime import lime_text
 ## for word embedding
 import gensim

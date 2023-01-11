@@ -79,7 +79,23 @@ def get_papers_for_all_companies(list_of_companies):
 """
 
 
+#extra functions 
 
+def remove_rows(df,column,word):
+    # used to remove titles that contain the word correction from df_final_abstracts_clean
+    """ summary: input param - dataframe, column and word to remove from the column 
+    output - dataframe with rows not containing the word input """
+    df_copy = df.copy(deep=True)
+    df_copy[column] = df_copy[column].str.lower()
+    index_to_exclude = []
+    for title_num in range(len(df_copy[column])):
+        title_list = df_copy[column][title_num].split()
+        for each_word in title_list:
+            if word == each_word:
+                index_to_exclude.append(title_num)
+                
+    exclude_df = df_copy.index.isin(index_to_exclude)  
+    return df_copy[~exclude_df]
 
 if __name__ == "__main__":
     comapny_list = ['Fauna Bio',
